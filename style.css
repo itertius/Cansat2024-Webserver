@@ -1,0 +1,33 @@
+body {
+    
+}
+
+/* header */
+header {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+
+    color: white;
+    background: #000;
+    width: 100%;
+}
+
+#map {
+    height: 180px;
+}
+
+
+/* -------------------------------------------- */
+
+/* main */
+.main {
+    display: grid;
+}
+/* -------------------------------------------- */
+
+/* footer */
+footer {
+
+}
+/* -------------------------------------------- */
