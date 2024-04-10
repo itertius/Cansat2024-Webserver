@@ -1,4 +1,8 @@
 
+var latlng = [];
+var marker, path;
+var map;
+var checkmap = 0;
 
 function updateSenserData(JSobj) {
   // Sync Sec //
@@ -50,28 +54,27 @@ function updateSenserData(JSobj) {
 
 // -------------------------------- //
 
-var latlng=[]
 // Marker //
-var marker, path;
-function updateMap() {
+function updateMap(JSobj) {
   if (!map) return;
   latlng.push([JSobj.valueLat, JSobj.valueLng]);
   var lat = latlng[latlng.length-1][0]
   var lng = latlng[latlng.length-1][1]
   marker = L.marker([lat,lng]).addTo(map);
   path = L.polyline(latlng).addTo(map);
-  if (latandlng.length>1){
+  if (latlng.length>1){
     map.panTo([lat,lng]);
    }
+}
+for (let i=0; i<500; i++) {
+  updateMap(JSobj);
 }
 // -------------------------------- //
 
 // Map Component //
-var map;
-var checkmap=0;
 function initmap(lat, lng) {
   map = L.map('map',{
-    center:[lat, lng], zoom: 18});
+    center: [lat, lng], zoom: 18});
   L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
       maxZoom: 22,
       attribution:"Skys Ace",
@@ -83,15 +86,15 @@ function initmap(lat, lng) {
 // WebSocket //
 function InitWebSocket() {
   var ws = new WebSocket('ws://' + window.location.hostname + ':81/');
-
+  console.log("init");
   ws.onmessage=function(event) {
     JSobj = JSON.parse(event.data);
     updateSenserData(JSobj)
     if(checkmap<1) {
-      initmap(JSobj.valueLat, JSobj.valueLng);
+      initmap(JSobj.valueLat, JSobj.valueLng); // num for test // when deloy change to initmap(JSobj.valueLat, JSobj.valueLng);
       checkmap++;
     }
-    updateMap();
+    updateMap(JSobj);
   };
   
   ws.onerror = function(error) {

@@ -1,33 +1,249 @@
-body {
-    
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
+
+.fullscreen {
+  width: 100vw;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  overflow: auto;
+  background-color: whitesmoke;
 }
 
-/* header */
-header {
-    display: flex;
-    justify-items: center;
-    align-items: center;
+.header {
+  padding-left: 6px;
+  padding-right: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  height: 10%;
+  background-color: whitesmoke;
+}
 
-    color: white;
-    background: #000;
-    width: 100%;
+.main {
+  background-color: #00040f;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  height: 80%;
+  color: white;
+  gap: 4px;
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.left {
+  background-color: whitesmoke;
+}
+
+.right {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.leftleft {
+  display: grid;
+  grid-template-rows: 50% 50%;
+}
+
+.rightright {
+  display: grid;
+  grid-template-rows: 50% 50%;
 }
 
 #map {
-    height: 180px;
+  height: 100%;
 }
 
+/* xs : 480px */
+@media screen and (max-width: 480px) {
+  .fullscreen {
+    overflow-y: scroll;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .header {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    height: auto;
+  }
+  .main {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+}
 
-/* -------------------------------------------- */
+/* sm: 768px */
+@media screen and (max-width: 768px) {
+  .main {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+}
 
-/* main */
-.main {
+/* lg: 1200px */
+@media screen and (max-width: 1200px) {
+  .main {
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}
+
+/* tailwindcss */
+.boxWidth {
+    max-width: 1280px;
+    width: 100%;
+}
+  
+.heading2 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 66.8px;
+    color: #ffffff;
+  }
+  
+.heading2.xs {
+    font-size: 48px;
+    line-height: 76.8px;
+  }
+  
+.paragraph {
+    font-family: 'Poppins', sans-serif;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 30.8px;
+    color: #bfbfbf;
+  }
+  
+.flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+.flexStart {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+.paddingX {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+  
+.paddingY {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  
+.padding {
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  
+.marginX {
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+  
+.marginY {
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+  
+.norm {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+  
+.overflowscreen {
+    overflow-y: scroll;
+}
+  
+.xsbox {
+    display: flex;
+    flex-direction: column-reverse;
+}
+  
+.smbox {
+    display: flex;
+    flex-direction: column-reverse;
+}
+  
+.lgbox {
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
 }
-/* -------------------------------------------- */
-
-/* footer */
-footer {
-
+  
+.phasepadding {
+    padding-top: 2px;
 }
-/* -------------------------------------------- */
+  
+.blueborder {
+    border-width: 2px;
+    border-color: #1a202c;
+}
+  
+.mapover {
+    overflow: hidden;
+}
+  
+.mapsize {
+    width: auto;
+    height: 100px; /* adjust accordingly */
+}
+  
+.section {
+    display: flex;
+    flex-direction: column;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+  
+.sectionReverse {
+    display: flex;
+    flex-direction: column-reverse;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+  
+.sectionImgReverse {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    margin-top: 10px;
+    position: relative;
+}
+  
+.sectionImg {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    margin-top: 10px;
+    position: relative;
+}
+  
+.sectionInfo {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+}
+/* -------------------------------------------- */ 

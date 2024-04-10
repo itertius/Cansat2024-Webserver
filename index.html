@@ -8,76 +8,94 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 
-<body>
-    <header>
-        <h2>Sky's Ace</h2>
+<body class="fullscreen">
+    <header class="header">
+        <div>
+            Sky's Ace
+        </div>
+        <div class="time">
+            <div id="SyncSec">
+                0
+            </div>
+        </div>
     </header>
 
     <div class="main">
-        <div id="SyncSec">
-            0
+        <div class="left">
+            <div id="map"></div>
         </div>
-        <div class="BMP280" id="BMP280">
-            BMP280
-            <div id="BMP280Temp">
-                0
+        
+        <div class="right">
+
+            <div class="leftleft">
+                <div class="BMP280" id="BMP280">
+                    BMP280
+                    <div id="BMP280Temp">
+                        0
+                    </div>
+                    <div id="BMP280Press">
+                        0
+                    </div>
+                    <div id="BMP280Altitude">
+                        0
+                    </div>
+                </div>
+                
+                <div class="MCP9808" id="MCP9808">
+                    MCP9808
+                    <div id="MCP9808Temp">
+                        0
+                    </div>
+                </div>
             </div>
-            <div id="BMP280Press">
-                0
-            </div>
-            <div id="BMP280Altitude">
-                0
+            
+            <div class="rightright">
+                <div class="GPS" id="GPS">
+                    GPS
+                    <div id="GPSLat">
+                        0
+                    </div>
+                    <div id="GPSLng">
+                        0
+                    </div>
+                    <div id="GPSAltitude">
+                        0
+                    </div>
+                </div>
+                
+                <div class="GY521" id="GY521">
+                    GY521
+                    <div id="GY521AccX">
+                        0
+                    </div>
+                    <div id="GY521AccY">
+                        0
+                    </div>
+                    <div id="GY521AccZ">
+                        0
+                    </div>
+                    <div id="GY521GyX">
+                        0
+                    </div>
+                    <div id="GY521GyY">
+                        0
+                    </div>
+                    <div id="GY521GyZ">
+                        0
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="MCP9808" id="MCP9808">
-            MCP9808
-            <div id="MCP9808Temp">
-                0
-            </div>
-        </div>
-        <div class="GPS" id="GPS">
-            GPS
-            <div id="GPSLat">
-                0
-            </div>
-            <div id="GPSLng">
-                0
-            </div>
-            <div id="GPSAltitude">
-                0
-            </div>
-        </div>
-        <div class="GY521" id="GY521">
-            GY521
-            <div id="GY521AccX">
-                0
-            </div>
-            <div id="GY521AccY">
-                0
-            </div>
-            <div id="GY521AccZ">
-                0
-            </div>
-            <div id="GY521GyX">
-                0
-            </div>
-            <div id="GY521GyY">
-                0
-            </div>
-            <div id="GY521GyZ">
-                0
-            </div>
-        </div>
-        <div class="Map" id="map">
-        </div>
+            
+        
         <div class="Phase" id="Phase">
             Phase
         </div>
+        
     </div>
 
     <footer>
