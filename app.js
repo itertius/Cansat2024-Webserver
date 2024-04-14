@@ -1,4 +1,4 @@
-
+import mysql from 'mysql2'
 var latlng = [];
 var marker, path;
 var map;
@@ -47,8 +47,28 @@ function updateSenserData(JSobj) {
   GY521GyY.innerHTML = JSobj.valueGyY;
   GY521GyZ.innerHTML = JSobj.valueGyZ;
   // -------------------------------- //
-}
 
+  // prepare data for MySql //
+  const data = {
+    valueSyncSec: JSobj.valueSyncSec,
+    valueTemp: JSobj.valueTemp,
+    valuePress: JSobj.valuePress,
+    valueBMPAltitude: JSobj.valueBMPAltitude,
+    valueMCPTemp: JSobj.valueMCPTemp,
+    valueLat: JSobj.valueLat,
+    valueLng: JSobj.valueLng,
+    valueGPSAltitude: JSobj.valueGPSAltitude,
+    valueAccX: JSobj.valueAccX,
+    valueAccY: JSobj.valueAccY,
+    valueAccZ: JSobj.valueAccZ,
+    valueGyX: JSobj.valueGyX,
+    valueGyY: JSobj.valueGyY,
+    valueGyZ: JSobj.valueGyZ,
+  // -------------------------------- //
+  }
+  // call updateDatabase function //
+  updateDatabase(data);
+}
 
 // Phase Component //
 
@@ -83,10 +103,44 @@ function initmap(lat, lng) {
 }
 // -------------------------------- //
 
+// update database function //
+function updateDatabase(data) {
+  // create pool //
+  const pool = mysql.createPool({
+    host: '127.0.0.1', // localhost
+    user: 'root',
+    password: 'iterrius',
+    database: 'skybase', // change to actual database
+  }).promise();
+
+  // define sql query //
+  const sql = `
+    UPDATE sensor_data
+    SET valueSyncSec = ?, valueTemp = ?, valuePress = ?, valueBMPAltitude = ?,
+        valueMCPTemp = ?, valueLat = ?, valueLng = ?, valueGPSAltitude = ?,
+        valueAccX = ?, valueAccY = ?, valueAccZ = ?, valueGyX = ?, valueGyY = ?, valueGyZ = ?
+    WHERE id = ?
+  `;
+
+  // .exe update //
+  pool.query(sql, Object.values(data))
+    .then((results) => {
+      console.log('Sensor data updated:', results);
+    })
+    .catch((error) => {
+      console.error('Error updating sensor data:', error);
+    })
+    .finally(() => {
+      pool.end();
+    });
+}
+
 // WebSocket //
 function InitWebSocket() {
   var ws = new WebSocket('ws://' + window.location.hostname + ':81/');
+
   console.log("init");
+
   ws.onmessage=function(event) {
     JSobj = JSON.parse(event.data);
     updateSenserData(JSobj)
