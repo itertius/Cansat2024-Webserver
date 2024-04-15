@@ -107,7 +107,7 @@ function initmap(lat, lng) {
 function updateDatabase(data) {
   // create pool //
   const pool = mysql.createPool({
-    host: '127.0.0.1', // localhost
+    host: '127.0.0.1', // localhost # find server #
     user: 'root',
     password: 'iterrius',
     database: 'skybase', // change to actual database

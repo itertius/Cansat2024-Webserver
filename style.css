@@ -1,46 +1,46 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
 
 .fullscreen {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  overflow: auto;
+  overflow: hidden;
   background-color: whitesmoke;
 }
 
 .header {
-  padding-left: 6px;
-  padding-right: 6px;
-  display: flexbox;
+  /* padding-left: 6px;
+  padding-right: 6px; */
+  display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-size: 1.5rem;
-  line-height: 2rem;
+  font-size: x-large;
   height: 10%;
   background-color: whitesmoke;
 }
 
 .main {
   background-color: #00040f;
-  padding-left: 6px;
+  /* padding-left: 6px;
   padding-right: 6px;
   padding-top: 4px;
-  padding-bottom: 4px;
+  padding-bottom: 4px; */
   height: 80%;
   color: white;
-  gap: 4px;
+  /* gap: 4px; */
   display: grid;
   grid-template-columns: 50% 50%;
+  height: 80%;
 }
 
 .footer {
   height: 10%;
-}
-
-.left {
-  background-color: whitesmoke;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: x-large;
 }
 
 .right {
@@ -60,10 +60,12 @@
 
 #map {
   height: 100%;
+  width: 98%;
+  background-color: white;
 }
 
 .Phase {
-  padding-top: 2px;
+  /* padding-top: 2px; */
 }
 
 /* xs : 480px */
