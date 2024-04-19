@@ -1,13 +1,14 @@
-
 #include <SPI.h>
 // #include <LoRa.h>
 #include <Arduino.h>
 #include <Wire.h>
 #include <ESP8266WiFi.h>
+#include <WiFiClient.h>
 // #include <ESPAsyncWebServer.h>
 #include <ESP8266WebServer.h>
 #include <WebSocketsServer.h>
-#include <FS.h>
+#include <MySQL_Connection.h>
+#include <MySQL_Cursor.h>
 
 // webpage //
 #include "webpage.h"
@@ -15,14 +16,24 @@
 
 // network //
 const char* ssid = "Jirayako_2.4GHz_EXT";
-const char* password = "0917755971";
+const char* pass = "0917755971";
 unsigned long previousMillis = 0;
-unsigned long interval = 500;
+unsigned long interval = 5000;
 // ------------------------ //
 
 // webserver port //
 ESP8266WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
+// ------------------------ //
+
+// mysql //
+IPAddress server_addr(127, 0, 0, 1);
+const int32_t server_port = 3306;
+const char* user = "root";
+const char* password = "iterrius";
+const char* database = "skybase";
+WiFiClient client;
+MySQL_Connection conn(&client);
 // ------------------------ //
 
 String JSONtxt;
@@ -79,13 +90,25 @@ void setup() {
   // init WiFi //
   WiFi.disconnect(true);
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid, pass);
   Serial.print("Connecting to WiFi ..");
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print('.');
     delay(1000);
   }
   Serial.println(WiFi.localIP());
+  // ------------------------ //
+
+  // connect to mysql //
+  char user_char[20];
+  char password_char[20];
+  strcpy(user_char, user);
+  strcpy(password_char, password);
+  if (conn.connect(server_addr, server_port, user_char, password_char)) {
+    Serial.println("connected");
+  } else {
+    Serial.println("connection failed");
+  }
   // ------------------------ //
 
   // // init lora module adjust in future //
@@ -179,8 +202,17 @@ void loop() {
     JSONtxt += "\"valueSyncSec\":\"" + valueSyncSec + "\"}";
 
     webSocket.broadcastTXT(JSONtxt);
-    Serial.println(JSONtxt);
-    // Serial.println(valueSyncSec);
+    // Serial.println(JSONtxt);
+    
+    // Upload data to MySQL //
+    if (conn.connected()) {
+      String sql = "INSERT INTO sensor_data (valueSyncSec, valueTemp, valuePress, valueBMPAltitude, valueMCPTemp, valueLat, valueLng, valueGPSAltitude, valueAccX, valueAccY, valueAccZ, valueGyX, valueGyY, valueGyZ) VALUES ('" + valueSyncSec + "', '" + valueTemp + "', '" + valuePress + "', '" + valueBMPAltitude + "', '" + valueMCPTemp + "', '" + valueLat + "', '" + valueLng + "', '" + valueGPSAltitude + "', '" + valueAccX + "', '" + valueAccY + "', '" + valueAccZ + "', '" + valueGyX + "', '" + valueGyY + "', '" + valueGyZ + "')";
+      MySQL_Cursor *cur = new MySQL_Cursor(&conn);
+      cur->execute(sql.c_str());
+      delete cur;
+    }
+    // ------------------------ //
+
     incoming = "";
   }
   // } if (packetSize)

@@ -121,7 +121,6 @@ const char webpage[] PROGMEM = R"=====(
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 
-
 <body class="fullscreen">
     <header class="header">
         <div>
@@ -214,9 +213,8 @@ const char webpage[] PROGMEM = R"=====(
 </body>
 
 <script>
-import mysql from 'mysql2'
 var latlng = [];
-var marker, path;
+var marker;
 var map;
 var checkmap = 0;
 
@@ -263,27 +261,6 @@ function updateSenserData(JSobj) {
   GY521GyY.innerHTML = JSobj.valueGyY;
   GY521GyZ.innerHTML = JSobj.valueGyZ;
   // -------------------------------- //
-
-  // prepare data for MySql //
-  const data = {
-    valueSyncSec: JSobj.valueSyncSec,
-    valueTemp: JSobj.valueTemp,
-    valuePress: JSobj.valuePress,
-    valueBMPAltitude: JSobj.valueBMPAltitude,
-    valueMCPTemp: JSobj.valueMCPTemp,
-    valueLat: JSobj.valueLat,
-    valueLng: JSobj.valueLng,
-    valueGPSAltitude: JSobj.valueGPSAltitude,
-    valueAccX: JSobj.valueAccX,
-    valueAccY: JSobj.valueAccY,
-    valueAccZ: JSobj.valueAccZ,
-    valueGyX: JSobj.valueGyX,
-    valueGyY: JSobj.valueGyY,
-    valueGyZ: JSobj.valueGyZ,
-  // -------------------------------- //
-  }
-  // call updateDatabase function //
-  updateDatabase(data);
 }
 
 // Phase Component //
@@ -297,14 +274,14 @@ function updateMap(JSobj) {
   var lat = latlng[latlng.length-1][0]
   var lng = latlng[latlng.length-1][1]
   marker = L.marker([lat,lng]).addTo(map);
-  path = L.polyline(latlng).addTo(map);
   if (latlng.length>1){
     map.panTo([lat,lng]);
    }
 }
-for (let i=0; i<500; i++) {
-  updateMap(JSobj);
-}
+// TEST PERFOMANCE //
+// for (let i=0; i<500; i++) {
+//   updateMap(JSobj);
+// }
 // -------------------------------- //
 
 // Map Component //
@@ -318,38 +295,6 @@ function initmap(lat, lng) {
   }).addTo(map);
 }
 // -------------------------------- //
-
-// update database function //
-function updateDatabase(data) {
-  // create pool //
-  const pool = mysql.createPool({
-    host: '127.0.0.1', // localhost
-    user: 'root',
-    password: 'iterrius',
-    database: 'skybase', // change to actual database
-  }).promise();
-
-  // define sql query //
-  const sql = `
-    UPDATE sensor_data
-    SET valueSyncSec = ?, valueTemp = ?, valuePress = ?, valueBMPAltitude = ?,
-        valueMCPTemp = ?, valueLat = ?, valueLng = ?, valueGPSAltitude = ?,
-        valueAccX = ?, valueAccY = ?, valueAccZ = ?, valueGyX = ?, valueGyY = ?, valueGyZ = ?
-    WHERE id = ?
-  `;
-
-  // .exe update //
-  pool.query(sql, Object.values(data))
-    .then((results) => {
-      console.log('Sensor data updated:', results);
-    })
-    .catch((error) => {
-      console.error('Error updating sensor data:', error);
-    })
-    .finally(() => {
-      pool.end();
-    });
-}
 
 // WebSocket //
 function InitWebSocket() {
