@@ -2,6 +2,7 @@ var latlng = [];
 var marker;
 var map;
 var checkmap = 0;
+var cansat_status = 0;
 
 function updateSenserData(JSobj) {
   // Sync Sec //
@@ -46,10 +47,32 @@ function updateSenserData(JSobj) {
   GY521GyY.innerHTML = JSobj.valueGyY;
   GY521GyZ.innerHTML = JSobj.valueGyZ;
   // -------------------------------- //
+
+  // status //
+  var cansat_phase = document.getElementById("cansat_phase");
+  updateSenserData.previousAltitude = JSobj.valueGPSAltitude;
+  updateStatus(JSobj);
+  // -------------------------------- //
 }
 
 // Phase Component //
+function updateStatus(JSobj) {
+  var previousAltitude = updateSenserData.previousAltitude || JSobj.valueGPSAltitude;
+  updateSenserData.previousAltitude = JSobj.valueGPSAltitude;
 
+  if (JSobj.valueGPSAltitude>previousAltitude) {
+    cansat_status = 1;
+    console.log(cansat_status);
+  }
+  else if (JSobj.valueGPSAltitude<previousAltitude) {
+    cansat_status = 2;
+    console.log(cansat_status);
+  }
+  else {
+    cansat_status = 3;
+    console.log(cansat_status);
+  }
+}
 // -------------------------------- //
 
 // Marker //

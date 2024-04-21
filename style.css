@@ -1,17 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
 
 .fullscreen {
-  width: 100%;
-  height: 100vh;
+  /* width: 100%; */
+  height: 97vh;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  overflow: hidden;
-  background-color: whitesmoke;
+  overflow: auto;
+  background-color: black;
 }
 
 .header {
-  /* padding-left: 6px;
-  padding-right: 6px; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,25 +20,30 @@
 }
 
 .main {
-  background-color: #00040f;
-  /* padding-left: 6px;
-  padding-right: 6px;
-  padding-top: 4px;
-  padding-bottom: 4px; */
+  background-color: rgb(12, 12, 21);
   height: 80%;
   color: white;
-  /* gap: 4px; */
   display: grid;
   grid-template-columns: 50% 50%;
-  height: 80%;
+
 }
 
 .footer {
-  height: 10%;
-  display: flex;
+  background-color: whitesmoke;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   justify-content: center;
   align-items: center;
+  height: 10%;
   font-size: x-large;
+}
+
+.footer_left {
+  text-align: center;
+}
+
+.footer_right {
+  text-align: center;
 }
 
 .right {
@@ -60,12 +63,8 @@
 
 #map {
   height: 100%;
-  width: 98%;
+  width: 100%;
   background-color: white;
-}
-
-.Phase {
-  /* padding-top: 2px; */
 }
 
 /* xs : 480px */
@@ -99,12 +98,45 @@
 /* lg: 1200px */
 @media screen and (max-width: 1200px) {
   .main {
+    /* display: flex;
+    flex-direction: column; */
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 4px;
     padding-bottom: 4px;
   }
 }
+
+/* 
+.xsbox {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.smbox {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.lgbox {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+} 
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* tailwindcss */
 .boxWidth {
@@ -132,13 +164,7 @@
     line-height: 30.8px;
     color: #bfbfbf;
   }
-  
-.flexCenter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
+
 .flexStart {
     display: flex;
     justify-content: flex-start;
