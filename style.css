@@ -1,11 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
 
-.fullscreen {
-  /* width: 100%; */
-  height: 97vh;
+* {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  overflow: auto;
+}
+
+.fullscreen {
+  height: 98vh;
+  overflow: hidden;
   background-color: black;
 }
 
@@ -13,7 +15,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
   font-size: x-large;
   height: 10%;
   background-color: whitesmoke;
@@ -25,7 +26,12 @@
   color: white;
   display: grid;
   grid-template-columns: 50% 50%;
+  padding: 4px;
+}
 
+.sensor-data {
+  display: grid;
+  grid-template-columns: 50% 50%;
 }
 
 .footer {
@@ -38,72 +44,40 @@
   font-size: x-large;
 }
 
-.footer_left {
-  text-align: center;
-}
-
-.footer_right {
-  text-align: center;
-}
-
-.right {
-  display: grid;
-  grid-template-columns: 50% 50%;
-}
-
-.leftleft {
-  display: grid;
-  grid-template-rows: 50% 50%;
-}
-
-.rightright {
-  display: grid;
-  grid-template-rows: 50% 50%;
-}
-
 #map {
   height: 100%;
   width: 100%;
   background-color: white;
 }
 
-/* xs : 480px */
+h2,
+.footer {
+  text-align: center;
+}
+
+@media screen and (max-width: 1200px) {
+  .main {
+    padding: 6px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .main {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 @media screen and (max-width: 480px) {
   .fullscreen {
     overflow-y: scroll;
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 16px;
   }
+
   .header {
     font-size: 0.75rem;
     line-height: 1rem;
     height: auto;
-  }
-  .main {
-    height: auto;
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-/* sm: 768px */
-@media screen and (max-width: 768px) {
-  .main {
-    height: auto;
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-/* lg: 1200px */
-@media screen and (max-width: 1200px) {
-  .main {
-    /* display: flex;
-    flex-direction: column; */
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 4px;
-    padding-bottom: 4px;
   }
 }
 

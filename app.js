@@ -8,7 +8,7 @@ function updateSenserData(JSobj) {
   // Sync Sec //
   var SyncSec = document.getElementById("SyncSec");
   SyncSec.innerHTML = JSobj.valueSyncSec;
-  // -------------------------------- //
+  // -------------------------------- //  
 
   // BMP280 Component //
   var BMP280Temp = document.getElementById("BMP280Temp");
@@ -87,9 +87,11 @@ function updateMap(JSobj) {
    }
 }
 // TEST PERFOMANCE //
-// for (let i=0; i<500; i++) {
-//   updateMap(JSobj);
-// }
+while(i<1) {
+  i++
+  updateMap(JSobj);
+  console.log(i)
+}
 // -------------------------------- //
 
 // Map Component //

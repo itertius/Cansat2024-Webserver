@@ -26,15 +26,15 @@ ESP8266WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 // ------------------------ //
 
-// mysql //
-IPAddress server_addr(127, 0, 0, 1);
-const int32_t server_port = 3306;
-const char* user = "root";
-const char* password = "iterrius";
-const char* database = "skybase";
-WiFiClient client;
-MySQL_Connection conn(&client);
-// ------------------------ //
+// // mysql //
+// IPAddress server_addr(127, 0, 0, 1);
+// const int32_t server_port = 3306;
+// const char* user = "root";
+// const char* password = "iterrius";
+// const char* database = "skybase";
+// WiFiClient client;
+// MySQL_Connection conn(&client);
+// // ------------------------ //
 
 String JSONtxt;
 String incoming = "";
@@ -99,17 +99,17 @@ void setup() {
   Serial.println(WiFi.localIP());
   // ------------------------ //
 
-  // connect to mysql //
-  char user_char[20];
-  char password_char[20];
-  strcpy(user_char, user);
-  strcpy(password_char, password);
-  if (conn.connect(server_addr, server_port, user_char, password_char)) {
-    Serial.println("connected");
-  } else {
-    Serial.println("connection failed");
-  }
-  // ------------------------ //
+  // // connect to mysql //
+  // char user_char[20];
+  // char password_char[20];
+  // strcpy(user_char, user);
+  // strcpy(password_char, password);
+  // if (conn.connect(server_addr, server_port, user_char, password_char)) {
+  //   Serial.println("connected");
+  // } else {
+  //   Serial.println("connection failed");
+  // }
+  // // ------------------------ //
 
   // // init lora module adjust in future //
   // LoRa.setPins(LORA_CS_PIN, LORA_RESET_PIN, LORA_IRQ_PIN);
@@ -194,7 +194,7 @@ void loop() {
     JSONtxt += "\"valueAccZ\":\"" + valueAccZ + "\",";
     JSONtxt += "\"valueGyX\":\"" + valueGyX + "\",";
     JSONtxt += "\"valueGyY\":\"" + valueGyY + "\",";
-    JSONtxt += "\"valueGyZ\":\"" + valueGyZ + "\",";
+    JSONtxt += "\"valueGyZ\":\"" + valueGyY + "\",";
     JSONtxt += "\"valueLat\":\"" + valueLat + "\",";
     JSONtxt += "\"valueLng\":\"" + valueLng + "\",";
     JSONtxt += "\"valueGPSAltitude\":\"" + valueGPSAltitude + "\",";
@@ -204,14 +204,14 @@ void loop() {
     webSocket.broadcastTXT(JSONtxt);
     // Serial.println(JSONtxt);
     
-    // Upload data to MySQL //
-    if (conn.connected()) {
-      String sql = "INSERT INTO sensor_data (valueSyncSec, valueTemp, valuePress, valueBMPAltitude, valueMCPTemp, valueLat, valueLng, valueGPSAltitude, valueAccX, valueAccY, valueAccZ, valueGyX, valueGyY, valueGyZ) VALUES ('" + valueSyncSec + "', '" + valueTemp + "', '" + valuePress + "', '" + valueBMPAltitude + "', '" + valueMCPTemp + "', '" + valueLat + "', '" + valueLng + "', '" + valueGPSAltitude + "', '" + valueAccX + "', '" + valueAccY + "', '" + valueAccZ + "', '" + valueGyX + "', '" + valueGyY + "', '" + valueGyZ + "')";
-      MySQL_Cursor *cur = new MySQL_Cursor(&conn);
-      cur->execute(sql.c_str());
-      delete cur;
-    }
-    // ------------------------ //
+    // // Upload data to MySQL //
+    // if (conn.connected()) {
+    //   String sql = "INSERT INTO sensor_data (valueSyncSec, valueTemp, valuePress, valueBMPAltitude, valueMCPTemp, valueLat, valueLng, valueGPSAltitude, valueAccX, valueAccY, valueAccZ, valueGyX, valueGyY, valueGyZ) VALUES ('" + valueSyncSec + "', '" + valueTemp + "', '" + valuePress + "', '" + valueBMPAltitude + "', '" + valueMCPTemp + "', '" + valueLat + "', '" + valueLng + "', '" + valueGPSAltitude + "', '" + valueAccX + "', '" + valueAccY + "', '" + valueAccZ + "', '" + valueGyX + "', '" + valueGyY + "', '" + valueGyZ + "')";
+    //   MySQL_Cursor *cur = new MySQL_Cursor(&conn);
+    //   cur->execute(sql.c_str());
+    //   delete cur;
+    // }
+    // // ------------------------ //
 
     incoming = "";
   }

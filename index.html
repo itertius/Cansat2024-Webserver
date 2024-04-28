@@ -15,89 +15,56 @@
 <body class="fullscreen">
     <header class="header">
         <div class="time">
-            <div id="SyncSec">
-                0
-            </div>
+            <span id="SyncSec">0</span>
         </div>
     </header>
 
-    <div class="main">
-        <div class="left">
+    <main class="main">
+        <section class="map-container">
             <div id="map"></div>
-        </div>
+        </section>
         
-        <div class="right">
-
-            <div class="leftleft">
-                <div class="BMP280" id="BMP280">
-                    BMP280
-                    <div id="BMP280Temp">
-                        0
-                    </div>
-                    <div id="BMP280Press">
-                        0
-                    </div>
-                    <div id="BMP280Altitude">
-                        0
-                    </div>
-                </div>
-                
-                <div class="MCP9808" id="MCP9808">
-                    MCP9808
-                    <div id="MCP9808Temp">
-                        0
-                    </div>
-                </div>
-            </div>
+        <section class="sensor-data">
+            <h2>BMP280</h2>
+            <ul>
+                <li>Temp : <span id="BMP280Temp">0</span></li>
+                <li>Pressure : <span id="BMP280Press">0</span></li>
+                <li>ALtitude : <span id="BMP280Altitude">0</span></li>
+            </ul>
             
-            <div class="rightright">
-                <div class="GPS" id="GPS">
-                    GPS
-                    <div id="GPSLat">
-                        0
-                    </div>
-                    <div id="GPSLng">
-                        0
-                    </div>
-                    <div id="GPSAltitude">
-                        0
-                    </div>
-                </div>
-                
-                <div class="GY521" id="GY521">
-                    GY521
-                    <div id="GY521AccX">
-                        0
-                    </div>
-                    <div id="GY521AccY">
-                        0
-                    </div>
-                    <div id="GY521AccZ">
-                        0
-                    </div>
-                    <div id="GY521GyX">
-                        0
-                    </div>
-                    <div id="GY521GyY">
-                        0
-                    </div>
-                    <div id="GY521GyZ">
-                        0
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+            <h2>MCP9808</h2>
+            <ul>
+                <li>Temp : <span id="MCP9808Temp">0</span></li>
+            </ul>
+            
+            <h2>GPS</h2>
+            <ul>
+                <li>Latitude : <span id="GPSLat">0</span></li>
+                <li>Longitude : <span id="GPSLng">0</span></li>
+                <li>Altitude : <span id="GPSAltitude">0</span></li>
+            </ul>
+            
+            <h2>GY521</h2>
+            <ul>
+                <li>Acc X : <span id="GY521AccX">0</span></li>
+                <li>Acc Y : <span id="GY521AccY">0</span></li>
+                <li>Acc Z : <span id="GY521AccZ">0</span></li>
+                <li>Gy X : <span id="GY521GyX">0</span></li>
+                <li>Gy Y : <span id="GY521GyY">0</span></li>
+                <li>Gy Z : <span id="GY521GyZ">0</span></li>
+            </ul>
+        </section>
+    </main>
 
     <footer class="footer">
-        <div class="footer_left" id="cansat_phase">
+        <div class="footer-left" id="cansat_phase">
             cansat_status
         </div>
-        <div class="footer_right">
+        <div class="footer-right">
             Copyright © 2024 Sky's Ace
         </div>
     </footer>
-</body>
 
-<script src="app.js"></script>
+    <script src="app.js"></script>
+</body>
 </html>
