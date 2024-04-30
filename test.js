@@ -18,7 +18,7 @@ var sensorElements = {
     valueAccZ: document.getElementById("GY521AccZ"),
     valueGyX: document.getElementById("GY521GyX"),
     valueGyY: document.getElementById("GY521GyY"),
-    valueGyY: document.getElementById("GY521GyZ"),a
+    valueGyZ: document.getElementById("GY521GyZ"),
 };
 
 function initmap(lat, lng) {

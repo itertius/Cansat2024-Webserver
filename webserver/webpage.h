@@ -170,8 +170,7 @@ var sensorElements = {
     valueAccZ: document.getElementById("GY521AccZ"),
     valueGyX: document.getElementById("GY521GyX"),
     valueGyY: document.getElementById("GY521GyY"),
-    valueGyY: document.getElementById("GY521GyZ"),
-    cansat_phase: document.getElementById("cansat_phase")
+    valueGyZ: document.getElementById("GY521GyZ"),
 };
 
 function initmap(lat, lng) {
@@ -189,10 +188,8 @@ function initmap(lat, lng) {
 function updateMap(JSobj) {
     if (!map) return;
     latlng.push([JSobj.valueLat, JSobj.valueLng]);
-    // var lat = latlng[latlng.length - 1][0];
-    var lat = Math.random() * (90 - (-90)) + (-90);
-    // var lng = latlng[latlng.length - 1][1];
-    var lng =  Math.random() * (180 - (-180)) + (-180);
+    var lat = latlng[latlng.length - 1][0];
+    var lng = latlng[latlng.length - 1][1];
     marker = L.marker([lat, lng]).addTo(map);
     if (latlng.length > 1) {
         map.panTo([lat, lng]);
@@ -208,9 +205,10 @@ function updateSenserData(JSobj) {
 
 function updateStatus(JSobj) {
     const previousAltitude = updateSenserData.previousAltitude || JSobj.valueGPSAltitude;
-    updateSenserData.previousAltitude = JSobj.valueGPSAltitude;
+    updateSenserData.previousAltitude = JSobj.ดvalueGPSAltitude;
     cansat_status = JSobj.valueGPSAltitude > previousAltitude ? 1 : JSobj.valueGPSAltitude < previousAltitude ? 2 : 3;
-    // console.log(cansat_status);
+    console.log(cansat_status);
+
 }
 
 var ws = new WebSocket('ws://' + window.location.hostname + ':81/');
