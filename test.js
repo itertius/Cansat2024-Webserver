@@ -53,10 +53,9 @@ function updateSenserData(JSobj) {
 
 function updateStatus(JSobj) {
     const previousAltitude = updateSenserData.previousAltitude || JSobj.valueGPSAltitude;
-    updateSenserData.previousAltitude = JSobj.ดvalueGPSAltitude;
+    updateSenserData.previousAltitude = JSobj.valueGPSAltitude;
     cansat_status = JSobj.valueGPSAltitude > previousAltitude ? 1 : JSobj.valueGPSAltitude < previousAltitude ? 2 : 3;
     console.log(cansat_status);
-
 }
 
 var ws = new WebSocket('ws://' + window.location.hostname + ':81/');
