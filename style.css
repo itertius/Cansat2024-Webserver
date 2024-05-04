@@ -92,28 +92,28 @@ sub {
   padding: 3vh 1vw 1vh 1vw;
 }
 
-.temp-graph {
-  background-color: #bfbfbf;
+#temp-graph {
+  background-color: #ffffff;
   width: auto;
-  height: 40vh
+  height: 40vh;
 }
 
-.hum-graph {
-  background-color: #bfbfbf;
+#press-graph {
+  background-color: #ffffff;
   width: auto;
-  height: 40vh
+  height: 40vh;
 }
 
-.gyro-anime {
-  background-color: #bfbfbf;
+#gyro-anime {
+  background-color: #ffffff;
   width: auto;
-  height: 40vh
+  height: 40vh;
 }
 
-.rocket-anime {
-  background-color: #bfbfbf;
+#rocket-anime {
+  background-color: #ffffff;
   width: auto;
-  height: 40vh
+  height: 40vh;
 }
 
 @media screen and (max-width: 1200px) {

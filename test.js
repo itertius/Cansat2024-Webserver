@@ -76,37 +76,55 @@ function updateStatus(JSobj) {
 
 function fetchData() {
   get(child(dbRef, `/`)).then((snapshot) => {
-    const { data } = snapshot.val();
+    const data = snapshot.val();
     if (data) {
       const formattedData = Object.values(data).map(sensorData => ({
         timestamp: sensorData.timestamp,
         valueTemp: sensorData.valueTemp,
         valueMCPTemp: sensorData.valueMCPTemp,
+        valuePress: sensorData.valuePress,
       }));
-      createChart(formattedData);
+      createChart(formattedData, getValueDropdown());
     } else {
       console.warn("No data found in Firebase");
     }
   });
 }
-document.getElementsByClassName("start-btn")[0].onclick = fetchData;
 
-function createChart(data) {
-  const ctx = document.getElementById('myChart').getContext('2d');
+function getValueDropdown() {
+  var value = document.getElementById("choose").value;
+  return value;
+}
+
+document.getElementById("start-btn").onclick = function () { fetchData() };
+
+function createChart(data, graph) {
+  const ctx = document.getElementById(graph).getContext('2d');
   const labels = data.map(point => `ID: ${point.id}`);
-  const datasets = [
-    {
-      label: 'MCPTemp',
-      data: data.map(point => ({ x: point.timestamp, y: point.valueMCPTemp })),
-      backgroundColor: 'rgb(255, 0, 0)',
-      borderColor: 'rgb(187, 0, 0)',
-    },
-    {
-      label: 'Temp',
-      data: data.map(point => ({ x: point.timestamp, y: point.valueTemp })),
-      backgroundColor: 'rgb(106, 90, 205)',
-      borderColor: 'rgb(0, 0, 255)',
-    }];
+  if (graph=="temp-graph") {
+    var datasets = [
+      {
+        label: 'MCP9808 Temperature',
+        data: data.map(point => ({ x: point.timestamp, y: point.valueMCPTemp })),
+        backgroundColor: 'rgb(255, 0, 0)',
+        borderColor: 'rgb(187, 0, 0)',
+      },
+      {
+        label: 'BMP280 Temperature',
+        data: data.map(point => ({ x: point.timestamp, y: point.valueTemp })),
+        backgroundColor: 'rgb(106, 90, 205)',
+        borderColor: 'rgb(0, 0, 255)',
+      }];
+  }
+  else if (graph=="press-graph") {
+    var datasets = [
+      {
+        label: 'Pressure',
+        data: data.map(point => ({ x: point.timestamp, y: point.valuePress })),
+        backgroundColor: 'rgb(120, 120, 120)',
+        borderColor: 'rgb(60, 60, 60)',
+      }];
+  }
 
   new Chart(ctx, {
     type: 'scatter',
