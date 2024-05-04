@@ -34,6 +34,7 @@ const sensorElements = {
 
 let mapInitialized = false;
 let cansatStatus = 0;
+let updateStatusPreviousAltitude = 0;
 
 function initMap(lat, lng) {
   if (mapInitialized) return;
@@ -49,10 +50,10 @@ function initMap(lat, lng) {
   }).addTo(map);
 }
 
-function updateMap(JSobj) {
+function updateMap(sensorData) {
   if (!map) return;
-  const lat = JSobj.valueLat;
-  const lng = JSobj.valueLng;
+  const lat = sensorData.valueLat;
+  const lng = sensorData.valueLng;
   const latlng = [[lat, lng]];
   const marker = L.marker([lat, lng]).addTo(map);
   if (latlng.length > 1) {
@@ -60,18 +61,17 @@ function updateMap(JSobj) {
   }
 }
 
-function updateSenserData(JSobj) {
+function updateSensorData(sensorData) {
   Object.keys(sensorElements).forEach(key => {
-    sensorElements[key].innerHTML = JSobj[`${key}`];
+    sensorElements[key].innerHTML = sensorData[key];
   });
-  updateStatus(JSobj);
+  updateStatus(sensorData);
 }
 
-function updateStatus(JSobj) {
-  const altitude = JSobj.valueGPSAltitude;
-  cansatStatus = altitude > (updateStatus.previousAltitude || altitude)? 1 : altitude < (updateStatus.previousAltitude || altitude)? 2 : 3;
-  updateStatus.previousAltitude = altitude;
-  console.log(cansatStatus);
+function updateStatus(sensorData) {
+  const altitude = sensorData.valueGPSAltitude;
+  cansatStatus = altitude > updateStatusPreviousAltitude ? 1 : (altitude < updateStatusPreviousAltitude ? 2 : 3);
+  updateStatusPreviousAltitude = altitude;
 }
 
 function fetchData() {
@@ -83,79 +83,99 @@ function fetchData() {
         valueTemp: sensorData.valueTemp,
         valueMCPTemp: sensorData.valueMCPTemp,
         valuePress: sensorData.valuePress,
+        valueLat: sensorData.valueLat,
+        valueLng: sensorData.valueLng,
+        valueGPSAltitude: sensorData.valueGPSAltitude,
       }));
-      createChart(formattedData, getValueDropdown());
+
+      const selectedGraph = document.getElementById("choose").value;
+      if (selectedGraph === "rocket-path") {
+        ThreeDChart(formattedData);
+      } else {
+        createChart(formattedData, selectedGraph);
+      }
     } else {
       console.warn("No data found in Firebase");
     }
   });
 }
 
-function getValueDropdown() {
-  var value = document.getElementById("choose").value;
-  return value;
-}
-
-document.getElementById("start-btn").onclick = function () { fetchData() };
-
 function createChart(data, graph) {
   const ctx = document.getElementById(graph).getContext('2d');
   const labels = data.map(point => `ID: ${point.id}`);
-  if (graph=="temp-graph") {
-    var datasets = [
+
+  const datasets = {
+    "temp-graph": [
       {
-        label: 'MCP9808 Temperature',
-        data: data.map(point => ({ x: point.timestamp, y: point.valueMCPTemp })),
-        backgroundColor: 'rgb(255, 0, 0)',
-        borderColor: 'rgb(187, 0, 0)',
+        label: 'MCP9808 Temperature', data: data.map(point => ({
+          x: point.timestamp, y: point.valueMCPTemp
+        })), backgroundColor: 'rgb(255, 0, 0)', borderColor: 'rgb(187, 0, 0)'
       },
-      {
-        label: 'BMP280 Temperature',
-        data: data.map(point => ({ x: point.timestamp, y: point.valueTemp })),
-        backgroundColor: 'rgb(106, 90, 205)',
-        borderColor: 'rgb(0, 0, 255)',
-      }];
-  }
-  else if (graph=="press-graph") {
-    var datasets = [
-      {
-        label: 'Pressure',
-        data: data.map(point => ({ x: point.timestamp, y: point.valuePress })),
-        backgroundColor: 'rgb(120, 120, 120)',
-        borderColor: 'rgb(60, 60, 60)',
-      }];
-  }
+      { label: 'BMP280 Temperature', data: data.map(point => ({ x: point.timestamp, y: point.valueTemp })), backgroundColor: 'rgb(106, 90, 205)', borderColor: 'rgb(0, 0, 255)' }
+    ],
+    "press-graph": [
+      { label: 'Pressure', data: data.map(point => ({ x: point.timestamp, y: point.valuePress })), backgroundColor: 'rgb(120, 120, 120)', borderColor: 'rgb(60, 60, 60)' }
+    ]
+  };
 
   new Chart(ctx, {
     type: 'scatter',
     data: {
       labels,
-      datasets,
+      datasets: datasets[graph]
     },
     options: {
       scales: {
-        x: {
-          title: 'Time',
-        },
-        y: {
-          title: 'Temperature',
-        }
+        x: { title: 'Time' },
+        y: { title: graph === 'temp-graph' ? 'Temperature' : 'Pressure' }
       }
     }
   });
 }
 
+function ThreeDChart(formattedData) {
+  const xValues = formattedData.map(data => data.valueLat);
+  const yValues = formattedData.map(data => data.valueLng);
+  const zValues = formattedData.map(data => data.valueGPSAltitude);
+
+  var datasets = [{
+    x: xValues,
+    y: yValues,
+    z: zValues,
+    mode: 'markers',
+    type: 'scatter3d',
+    marker: {
+      color: 'rgb(10, 100, 240)',
+      size: 2
+    }
+  }];
+  var layout = {
+    autosize: true,
+    height: 500,
+    scene: {
+      aspectratio: {
+        x: 1,
+        y: 1,
+        z: 1
+      }
+    }
+  };
+  Plotly.newPlot('rocket-path', datasets, layout);
+}
+
 const ws = new WebSocket('ws://' + window.location.hostname + ':81/');
 ws.onmessage = function (event) {
-  const JSobj = JSON.parse(event.data);
-  updateSenserData(JSobj);
+  const sensorData = JSON.parse(event.data);
+  updateSensorData(sensorData);
   if (!mapInitialized) {
-    initMap(JSobj.valueLat, JSobj.valueLng);
+    initMap(sensorData.valueLat, sensorData.valueLng);
     mapInitialized = true;
   }
-  updateMap(JSobj);
+  updateMap(sensorData);
 };
 
 ws.onerror = function (error) {
   console.error("WebSocket error:", error);
-};1
+};
+
+document.getElementById("start-btn").onclick = function () { fetchData() };

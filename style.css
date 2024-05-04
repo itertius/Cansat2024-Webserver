@@ -83,7 +83,7 @@ sub {
 
 .visual-data {
   display: grid;
-  grid-template-columns: 25% 25% 25% 25%;
+  grid-template-columns: 33% 33% 33%;
   column-gap: 4px;
   justify-content: center;
   text-align: center;
@@ -94,13 +94,13 @@ sub {
 
 #temp-graph {
   background-color: #ffffff;
-  width: auto;
+  width: 100%;
   height: 40vh;
 }
 
 #press-graph {
   background-color: #ffffff;
-  width: auto;
+  width: 100%;
   height: 40vh;
 }
 
@@ -110,10 +110,10 @@ sub {
   height: 40vh;
 }
 
-#rocket-anime {
+#rocket-path {
   background-color: #ffffff;
-  width: auto;
-  height: 40vh;
+  width: 100%;
+  height: 98%;
 }
 
 @media screen and (max-width: 1200px) {
@@ -123,9 +123,30 @@ sub {
 }
 
 @media screen and (max-width: 768px) {
-  .main {
-    display: flex;
-    flex-direction: column;
+  #map {
+    height: 100%;
+    width: 100%;
+    background-color: white;
+  }
+  main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-auto-rows: minmax(auto, 1fr);
+    width: 100%;
+    height: 100vh;
+  }
+  .visual-data {
+    display: inline-block;
+  }
+  .start-btn {
+    width: 18vw;
+    height: 5vh;
+    font-size: large;
+  }
+  #choose {
+    width: 30vw;
+    height: 5vh;
+    font-size: large;
   }
 }
 
@@ -134,187 +155,9 @@ sub {
     overflow-y: scroll;
     padding: 16px;
   }
-
   .header {
     font-size: 0.75rem;
     line-height: 1rem;
     height: auto;
   }
 }
-
-/* 
-.xsbox {
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.smbox {
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.lgbox {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-} 
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* tailwindcss */
-.boxWidth {
-    max-width: 1280px;
-    width: 100%;
-}
-  
-.heading2 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 40px;
-    line-height: 66.8px;
-    color: #ffffff;
-  }
-  
-.heading2.xs {
-    font-size: 48px;
-    line-height: 76.8px;
-  }
-  
-.paragraph {
-    font-family: 'Poppins', sans-serif;
-    font-weight: normal;
-    font-size: 18px;
-    line-height: 30.8px;
-    color: #bfbfbf;
-  }
-
-.flexStart {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-  }
-  
-.paddingX {
-    padding-left: 6px;
-    padding-right: 6px;
-  }
-  
-.paddingY {
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-  
-.padding {
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-  
-.marginX {
-    margin-left: 6px;
-    margin-right: 6px;
-  }
-  
-.marginY {
-    margin-top: 6px;
-    margin-bottom: 6px;
-  }
-  
-.norm {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-}
-  
-.overflowscreen {
-    overflow-y: scroll;
-}
-  
-.xsbox {
-    display: flex;
-    flex-direction: column-reverse;
-}
-  
-.smbox {
-    display: flex;
-    flex-direction: column-reverse;
-}
-  
-.lgbox {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-}
-  
-.phasepadding {
-    padding-top: 2px;
-}
-  
-.blueborder {
-    border-width: 2px;
-    border-color: #1a202c;
-}
-  
-.mapover {
-    overflow: hidden;
-}
-  
-.mapsize {
-    width: auto;
-    height: 100px; /* adjust accordingly */
-}
-  
-.section {
-    display: flex;
-    flex-direction: column;
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-  
-.sectionReverse {
-    display: flex;
-    flex-direction: column-reverse;
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-  
-.sectionImgReverse {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 10px;
-    margin-top: 10px;
-    position: relative;
-}
-  
-.sectionImg {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 10px;
-    margin-top: 10px;
-    position: relative;
-}
-  
-.sectionInfo {
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    flex-direction: column;
-}
-/* -------------------------------------------- */ 

@@ -54,7 +54,6 @@
                 <li>Gy Z : <span id="GY521GyZ">0</span></li>
             </ul>
         </section>
-
     </main>
 
     <div id="cansat_phase">
@@ -64,23 +63,20 @@
     <sub>
         <section class="visual-data">
             <div> 
-                <canvas id="temp-graph">temp-graph</canvas>
+                <canvas id="temp-graph"></canvas>
             </div>
             <div>
-                <canvas id="press-graph">press-graph</canvas>
+                <div id="rocket-path"></div>
             </div>
             <div>
-                <canvas id="gyro-anime">gyro-anime</canvas>
-            </div>
-            <div>
-                <canvas id="rocket-anime">rocket-anime</canvas>
+                <canvas id="press-graph"></canvas>
             </div>
         </section>
         <select name="choose-component" id="choose">
             <option value="temp-graph">temp-graph</option>
             <option value="press-graph">press-graph</option>
-            <option value="gyro-anime">gyro-anime</option>
-            <option value="rocket-anime">rocket-anime</option>
+            <!-- <option value="gyro-anime">gyro-anime</option> -->
+            <option value="rocket-path">rocket-path</option>
         </select>
         <button class="start-btn" id="start-btn" type="button">Start</button>
     </sub>
@@ -92,6 +88,8 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script type="module" src='https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.32.0/plotly.min.js'></script>
+    <script type="module" src='https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js'></script>
     <script type="module" src="test.js"></script>
 </body>
 </html>
