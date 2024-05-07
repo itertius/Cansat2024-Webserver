@@ -17,9 +17,7 @@ const dbRef = ref(getDatabase());
 
 const sensorElements = {
   valueSyncSec: document.getElementById("SyncSec"),
-  valueTemp: document.getElementById("BMP280Temp"),
   valuePress: document.getElementById("BMP280Press"),
-  valueBMPAltitude: document.getElementById("BMP280Altitude"),
   valueMCPTemp: document.getElementById("MCP9808Temp"),
   valueLat: document.getElementById("GPSLat"),
   valueLng: document.getElementById("GPSLng"),
@@ -163,10 +161,28 @@ function ThreeDChart(formattedData) {
   Plotly.newPlot('rocket-path', datasets, layout);
 }
 
+var log=[];
+
+function download() {
+  if (log.length === 0) {
+    console.warn("No log data to download.");
+    return;
+  }
+
+  const blob = new Blob([log.join('\n')], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'websocket_data.txt';
+  a.click();
+  URL.revokeObjectURL(url); // revoke the blob URL after download
+}
+
 const ws = new WebSocket('ws://' + window.location.hostname + ':81/');
 ws.onmessage = function (event) {
   const sensorData = JSON.parse(event.data);
   updateSensorData(sensorData);
+  log.push(JSON.stringify(sensorData));
   if (!mapInitialized) {
     initMap(sensorData.valueLat, sensorData.valueLng);
     mapInitialized = true;
@@ -179,3 +195,4 @@ ws.onerror = function (error) {
 };
 
 document.getElementById("start-btn").onclick = function () { fetchData() };
+document.getElementById("download-btn").onclick = function () { download() };
