@@ -73,11 +73,14 @@
         <select name="choose-component" id="choose">
             <option value="temp-graph">temp-graph</option>
             <option value="press-graph">press-graph</option>
-            <!-- <option value="gyro-anime">gyro-anime</option> -->
             <option value="rocket-path">rocket-path</option>
+            <option value="gyro-visual">gyro-visualization</option>
         </select>
         <button class="start-btn" id="start-btn" type="button">Start</button>
         <button class="start-btn" id="download-btn" type="button" style="width: 10vw;">Download Log</button>
+        <div class="cube-content">
+            <div id="cube">
+        </div>
     </sub>
 
     <footer>
@@ -86,9 +89,9 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <script type="module" src='https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.32.0/plotly.min.js'></script>
-    <script type="module" src='https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js'></script>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script type="module" src="test.js"></script>
 </body>
 </html>

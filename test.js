@@ -78,7 +78,6 @@ function fetchData() {
     if (data) {
       const formattedData = Object.values(data).map(sensorData => ({
         timestamp: sensorData.timestamp,
-        valueTemp: sensorData.valueTemp,
         valueMCPTemp: sensorData.valueMCPTemp,
         valuePress: sensorData.valuePress,
         valueLat: sensorData.valueLat,
@@ -89,7 +88,8 @@ function fetchData() {
       const selectedGraph = document.getElementById("choose").value;
       if (selectedGraph === "rocket-path") {
         ThreeDChart(formattedData);
-      } else {
+      }
+      else {
         createChart(formattedData, selectedGraph);
       }
     } else {
@@ -105,11 +105,10 @@ function createChart(data, graph) {
   const datasets = {
     "temp-graph": [
       {
-        label: 'MCP9808 Temperature', data: data.map(point => ({
+        label: 'Temperature', data: data.map(point => ({
           x: point.timestamp, y: point.valueMCPTemp
         })), backgroundColor: 'rgb(255, 0, 0)', borderColor: 'rgb(187, 0, 0)'
       },
-      { label: 'BMP280 Temperature', data: data.map(point => ({ x: point.timestamp, y: point.valueTemp })), backgroundColor: 'rgb(106, 90, 205)', borderColor: 'rgb(0, 0, 255)' }
     ],
     "press-graph": [
       { label: 'Pressure', data: data.map(point => ({ x: point.timestamp, y: point.valuePress })), backgroundColor: 'rgb(120, 120, 120)', borderColor: 'rgb(60, 60, 60)' }
@@ -149,16 +148,63 @@ function ThreeDChart(formattedData) {
   }];
   var layout = {
     autosize: true,
-    height: 500,
+    height: 300,
     scene: {
       aspectratio: {
         x: 1,
         y: 1,
         z: 1
       }
+    },
+    margin: {
+      l: 0,
+      r: 0,
+      b: 0,
+      t: 0
     }
   };
   Plotly.newPlot('rocket-path', datasets, layout);
+}
+let scene, camera, cube, geometry, renderer, material, cubeWidth, cubeHeight;
+function parentWidth(elem) {
+  return elem.parentElement.clientWidth;
+}
+function parentHeight(elem) {
+  return elem.parentElement.clientHeight;
+}
+function initThreeD() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xffffff);
+  cubeWidth = parentWidth(document.getElementById("cube"));
+  cubeHeight = parentHeight(document.getElementById("cube"));
+  camera = new THREE.PerspectiveCamera(75, cubeWidth / cubeHeight, 0.1, 1000);
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(cubeWidth, cubeHeight);
+  document.getElementById('cube').appendChild(renderer.domElement);
+
+  var cubeMaterials = [
+    new THREE.MeshBasicMaterial({ color: 0x03045e }),
+    new THREE.MeshBasicMaterial({ color: 0x023e8a }),
+    new THREE.MeshBasicMaterial({ color: 0x0077b6 }),
+    new THREE.MeshBasicMaterial({ color: 0x03045e }),
+    new THREE.MeshBasicMaterial({ color: 0x023e8a }),
+    new THREE.MeshBasicMaterial({ color: 0x0077b6 }),
+  ];
+
+  geometry = new THREE.BoxGeometry(5, 1, 4);
+  material = new THREE.MeshFaceMaterial(cubeMaterials);
+
+  cube = new THREE.Mesh(geometry, material);
+  scene.add(cube);
+  camera.position.z = 5;
+  renderer.render(scene, camera);
+}
+
+function animate(sensorData) {
+  cube.rotation.x = sensorData.valueGyX;
+  cube.rotation.y = sensorData.valueGyX;
+  cube.rotation.z = sensorData.valueGyX;
+  renderer.render(scene, camera);
 }
 
 var log=[];
@@ -175,7 +221,7 @@ function download() {
   a.href = url;
   a.download = 'websocket_data.txt';
   a.click();
-  URL.revokeObjectURL(url); // revoke the blob URL after download
+  URL.revokeObjectURL(url);
 }
 
 const ws = new WebSocket('ws://' + window.location.hostname + ':81/');
@@ -188,11 +234,20 @@ ws.onmessage = function (event) {
     mapInitialized = true;
   }
   updateMap(sensorData);
+  animate(sensorData);
 };
 
 ws.onerror = function (error) {
   console.error("WebSocket error:", error);
 };
 
-document.getElementById("start-btn").onclick = function () { fetchData() };
+document.getElementById("start-btn").onclick = function () { 
+  if (document.getElementById("choose").value === "gyro-visual") {
+    initThreeD();
+  }
+  else {
+    fetchData();
+  }
+ };
+
 document.getElementById("download-btn").onclick = function () { download() };

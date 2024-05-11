@@ -10,12 +10,120 @@
 #include <Firebase_ESP_Client.h>
 
 // webpage //
-#include "webpage.h"
+const char mainpage[] PROGMEM = R"=====(
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- <link rel="stylesheet" href="./css/bootstrap.min.css"> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <title>Dashboard</title>
+</head>
+
+<body style="font-family: 'Prompt', sans-serif">
+
+  <div class="row">
+    <div class="col">
+      <button type="button" class="btn btn-primary" onclick="downloadlog(GYROlog,'GYRO')">
+        Download log
+      </button>
+    </div>
+  </div>
+
+  <script>
+
+
+
+    InitWebSocket();
+
+
+
+
+    function InitWebSocket() {
+
+      var websock = new WebSocket('ws://' + window.location.hostname + ':81/');
+
+      websock.onclose = function (e) {
+        console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+        //setTimeout(function() {
+        InitWebSocket();
+        //  }, 500);
+      };
+      websock.onerror = function (err) {
+        console.error('Socket encountered error: ', err.message, 'Closing socket');
+        websock.close();
+      };
+
+       websock.onmessage = function (evt) {
+        JSONobj = JSON.parse(evt.data);
+        var text = JSON.stringify(GYROlog);
+        var GYROlog_count = GYROlog.length();
+
+        if (JSONobj.state == 1 || GYROlog_count <= 3000) {
+          console.log("update: ", JSONobj.state);
+          GYROlog.push([
+            JSONobj.state,
+            [
+              JSONobj.time,
+              JSONobj.valueAccX,
+              JSONobj.valueAccY,
+              JSONobj.valueAccZ,
+              JSONobj.valueGyX,
+              JSONobj.valueGyY,
+              JSONobj.valueGyZ,
+            ]
+          ]);
+        }
+        else {
+          console.log("Stop");
+        }
+      }
+    }
+    var GYROlog = []
+
+
+
+
+    function download(filename, text) {
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+    }
+
+    function downloadlog(hardware, name) {
+      download(name + "_log.txt", JSON.stringify(hardware));
+    }
+
+  </script>
+</body>
+
+</html>
+)=====";
 // ------------------------ //
 
 // network //
-const char* ssid = "Jirayako_2.4GHz_EXT";
-const char* pass = "0917755971";
+const char* ssid = "B5 INTHANIN";
+const char* pass = "inthanin";
 unsigned long previousMillis = 0;
 unsigned long interval = 5000;
 // ------------------------ //
@@ -25,31 +133,31 @@ ESP8266WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 // ------------------------ //
 
-// firebase //
-#define API_KEY "AIzaSyAqoFAWt3NbaND-BM7RzhXCOv5AFD19S4k"
-#define DATABASE_URL "https://cansat24-dfef7-default-rtdb.asia-southeast1.firebasedatabase.app"
-FirebaseData fbdo;
-FirebaseAuth auth;
-FirebaseConfig config;
-FirebaseJson json;
-unsigned long sendDataPrevMillis = 0;
-int intValue;
-float floatValue;
-bool signupOK = false;
-String databasePath;
-String BMPPressure = "/valuePress";
-String GYAccX = "/valueAccX";
-String GYAccY = "/valueAccY";
-String GYAccZ = "/valueAccZ";
-String GYX = "/valueGyX";
-String GYY = "/valueGyY";
-String GYZ = "/valueGyZ";
-String GPSLat = "/valueLat";
-String GPSLng = "/valueLng";
-String GPSAltitude = "/valueGPSAltitude";
-String MCPTemp = "/valueMCPTemp";
-String timestamp = "/timestamp";
-// ------------------------ //
+// // firebase //
+// #define API_KEY "AIzaSyAqoFAWt3NbaND-BM7RzhXCOv5AFD19S4k"
+// #define DATABASE_URL "https://cansat24-dfef7-default-rtdb.asia-southeast1.firebasedatabase.app"
+// FirebaseData fbdo;
+// FirebaseAuth auth;
+// FirebaseConfig config;
+// FirebaseJson json;
+// unsigned long sendDataPrevMillis = 0;
+// int intValue;
+// float floatValue;
+// bool signupOK = false;
+// String databasePath;
+// String BMPPressure = "/valuePress";
+// String GYAccX = "/valueAccX";
+// String GYAccY = "/valueAccY";
+// String GYAccZ = "/valueAccZ";
+// String GYX = "/valueGyX";
+// String GYY = "/valueGyY";
+// String GYZ = "/valueGyZ";
+// String GPSLat = "/valueLat";
+// String GPSLng = "/valueLng";
+// String GPSAltitude = "/valueGPSAltitude";
+// String MCPTemp = "/valueMCPTemp";
+// String timestamp = "/timestamp";
+// // ------------------------ //
 
 String JSONtxt;
 String incoming = "";
@@ -63,7 +171,7 @@ String incoming = "";
 String getValue(String data, char separator, int index) {
   int found = 0;
   int strIndex[] = { 0, -1 };
-  'int maxIndex = data.length() - 1;
+  int maxIndex = data.length() - 1;
   for (int i = 0; i <= maxIndex && found <= index; i++) {
     if (data.charAt(i) == separator || i == maxIndex) {
       found++;
@@ -96,7 +204,7 @@ String getValue(String data, char separator, int index) {
 // // ------------------------ //
 
 void handleRoot() {
-  server.send(200, "text/html", webpage);
+  server.send(200, "text/html", mainpage);
 }
 
 void setup() {
@@ -118,24 +226,24 @@ void setup() {
 
 
   // init LoRa //
-  LoRa.setPins(SS, RST, DIO0);
-  if (!LoRa.begin(433E6)) {
-    Serial.println("LoRa Error");
-    while (1);
-  }
+  // LoRa.setPins(SS, RST, DIO0);
+  // if (!LoRa.begin(433E6)) {
+  //   Serial.println("LoRa Error");
+  //   while (1);
+  // }
 
   // init firebase //
-  config.api_key = API_KEY; // assign api key
-  config.database_url = DATABASE_URL; // assign realtime database
-  if (Firebase.signUp(&config, &auth, "", "")) {
-    Serial.println(" - Firebase OK - ");
-    signupOK = true;
-  }
-  else {
-    Serial.printf("%s\n", config.signer.signupError.message.c_str());
-  }
-  Firebase.begin(&config, &auth);
-  Firebase.reconnectWiFi(true);
+  // config.api_key = API_KEY; // assign api key
+  // config.database_url = DATABASE_URL; // assign realtime database
+  // if (Firebase.signUp(&config, &auth, "", "")) {
+  //   Serial.println(" - Firebase OK - ");
+  //   signupOK = true;
+  // }
+  // else {
+  //   Serial.printf("%s\n", config.signer.signupError.message.c_str());
+  // }
+  // Firebase.begin(&config, &auth);
+  // Firebase.reconnectWiFi(true);
 
   // Initialize Server //
   server.on("/", handleRoot);
@@ -144,63 +252,63 @@ void setup() {
 }
 
 void loop() {
-  unsigned long currentMillis = millis();
-  // int packetSize = LoRa.parsePacket();
+  // unsigned long currentMillis = millis();
+  // // int packetSize = LoRa.parsePacket();
 
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("Reconnecting to WiFi...");
-    WiFi.disconnect();
-    WiFi.reconnect();
-  }
+  // if (WiFi.status() != WL_CONNECTED) {
+  //   Serial.println("Reconnecting to WiFi...");
+  //   WiFi.disconnect();
+  //   WiFi.reconnect();
+  // }
  
-  if (true) { // if (packetSize) {}
+  // if (true) { // if (packetSize) {}
 
-    // Read the packet //
-    while (LoRa.available()) {
-      incoming += LoRa.readString();
-    }
+  //   // Read the packet //
+  //   while (LoRa.available()) {
+  //     incoming += LoRa.readString();
+  //   }
 
-    // // Mock Update Data //
-    // int dataIdx = (currentMillis / interval) % numData;
-    // incoming = mockData[dataIdx];
-    // // Serial.println("Current data index: " + String(dataIdx));
-    // // Serial.println("Incoming data: " + incoming);
-    // // ------------------------ //
+  //   // // Mock Update Data //
+  //   // int dataIdx = (currentMillis / interval) % numData;
+  //   // incoming = mockData[dataIdx];
+  //   // // Serial.println("Current data index: " + String(dataIdx));
+  //   // // Serial.println("Incoming data: " + incoming);
+  //   // // ------------------------ //
 
-    // case if sensor data is csv format //
-    // BMP280 == temp, pressure, altitude
-    // GY521 == Acceleration X Y Z and Gyro X Y Z
-    // gps == lat, lng, altitude
-    // mcp == temp
+  //   // case if sensor data is csv format //
+  //   // BMP280 == temp, pressure, altitude
+  //   // GY521 == Acceleration X Y Z and Gyro X Y Z
+  //   // gps == lat, lng, altitude
+  //   // mcp == temp
 
-    // BMP280 == valuePress
-    String valuePress = getValue(incoming, ',', 0);
+  //   // BMP280 == valuePress
+  //   String valuePress = getValue(incoming, ',', 0);
 
-    // GY521 == acceleration = valueAccX, valueAccY, valueAccZ | Gyroscope = valueGyX, valueGyY, valueGyZ
-    // Acc //
-    String valueAccX = getValue(incoming, ',', 1);
-    String valueAccY = getValue(incoming, ',', 2);
-    String valueAccZ = getValue(incoming, ',', 3);
-    // Gyro //
-    String valueGyX = getValue(incoming, ',', 4);
-    String valueGyY = getValue(incoming, ',', 5);
-    String valueGyZ = getValue(incoming, ',', 6);
+  //   // GY521 == acceleration = valueAccX, valueAccY, valueAccZ | Gyroscope = valueGyX, valueGyY, valueGyZ
+  //   // Acc //
+  //   String valueAccX = getValue(incoming, ',', 1);
+  //   String valueAccY = getValue(incoming, ',', 2);
+  //   String valueAccZ = getValue(incoming, ',', 3);
+  //   // Gyro //
+  //   String valueGyX = getValue(incoming, ',', 4);
+  //   String valueGyY = getValue(incoming, ',', 5);
+  //   String valueGyZ = getValue(incoming, ',', 6);
 
-    // GPS == valueLat, valueLng, valueGPSAltitude
-    String valueLat = getValue(incoming, ',', 7);
-    String valueLng = getValue(incoming, ',', 8);
-    String valueGPSAltitude = getValue(incoming, ',', 9);
+  //   // GPS == valueLat, valueLng, valueGPSAltitude
+  //   String valueLat = getValue(incoming, ',', 7);
+  //   String valueLng = getValue(incoming, ',', 8);
+  //   String valueGPSAltitude = getValue(incoming, ',', 9);
 
-    // MCP9808 == temp
-    String valueMCPTemp = getValue(incoming, ',', 10);
+  //   // MCP9808 == temp
+  //   String valueMCPTemp = getValue(incoming, ',', 10);
 
-    String valueSyncSec = getValue(incoming, ',', 11);
-    // ------------------------ //
+  //   String valueSyncSec = getValue(incoming, ',', 11);
+  //   // ------------------------ //
 
     webSocket.loop();
     server.handleClient();
 
-    // JSON Data //
+  //   // JSON Data //
     JSONtxt = "{\"valuePress\":\"" + valuePress + "\",";
     JSONtxt += "\"valueAccX\":\"" + valueAccX + "\",";
     JSONtxt += "\"valueAccY\":\"" + valueAccY + "\",";
@@ -214,30 +322,30 @@ void loop() {
     JSONtxt += "\"valueMCPTemp\":\"" + valueMCPTemp + "\",";
     JSONtxt += "\"valueSyncSec\":\"" + valueSyncSec + "\"}";
 
-    webSocket.broadcastTXT(JSONtxt);
-    // Serial.println(JSONtxt);
+  //   webSocket.broadcastTXT(JSONtxt);
+  //   // Serial.println(JSONtxt);
     
-    // firebase //
-    if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 5000 || sendDataPrevMillis == 0)) { // set store freq
-      sendDataPrevMillis = millis();
-      databasePath = valueSyncSec + "/";
-      json.set(BMPPressure.c_str(), valuePress);
-      json.set(GYAccX.c_str(), valueAccX);
-      json.set(GYAccY.c_str(), valueAccY);
-      json.set(GYAccZ.c_str(), valueAccZ);
-      json.set(GYX.c_str(), valueGyX);
-      json.set(GYY.c_str(), valueGyY);
-      json.set(GYZ.c_str(), valueGyZ);
-      json.set(GPSLat.c_str(), valueLat);
-      json.set(GPSLng.c_str(), valueLng);
-      json.set(GPSAltitude.c_str(), valueGPSAltitude);
-      json.set(MCPTemp.c_str(), valueMCPTemp);
-      json.set(timestamp.c_str(), valueSyncSec);
-      Serial.printf(" - Set json... %s - \n", Firebase.RTDB.setJSON(&fbdo, databasePath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
-    }
-    // ------------------------ //
+  //   // firebase //
+  //   if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 5000 || sendDataPrevMillis == 0)) { // set store freq
+  //     sendDataPrevMillis = millis();
+  //     databasePath = valueSyncSec + "/";
+  //     json.set(BMPPressure.c_str(), valuePress);
+  //     json.set(GYAccX.c_str(), valueAccX);
+  //     json.set(GYAccY.c_str(), valueAccY);
+  //     json.set(GYAccZ.c_str(), valueAccZ);
+  //     json.set(GYX.c_str(), valueGyX);
+  //     json.set(GYY.c_str(), valueGyY);
+  //     json.set(GYZ.c_str(), valueGyZ);
+  //     json.set(GPSLat.c_str(), valueLat);
+  //     json.set(GPSLng.c_str(), valueLng);
+  //     json.set(GPSAltitude.c_str(), valueGPSAltitude);
+  //     json.set(MCPTemp.c_str(), valueMCPTemp);
+  //     json.set(timestamp.c_str(), valueSyncSec);
+  //     Serial.printf(" - Set json... %s - \n", Firebase.RTDB.setJSON(&fbdo, databasePath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
+  //   }
+  //   // ------------------------ //
     
-    incoming = "";
-  }
+  //   incoming = "";
+  // }
 
 }
