@@ -1,4 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+import { getDatabase, ref, child, get } from 'https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js';
+
 const firebaseConfig = {
   apiKey: "AIzaSyAqoFAWt3NbaND-BM7RzhXCOv5AFD19S4k",
   authDomain: "cansat24-dfef7.firebaseapp.com",
@@ -8,12 +10,10 @@ const firebaseConfig = {
   messagingSenderId: "810679267387",
   appId: "1:810679267387:web:3335e5abb33a716a4c2c1e"
 };
+
 const app = initializeApp(firebaseConfig);
-
-import { getDatabase, ref, child, get } from 'https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js'
-
 const db = getDatabase();
-const dbRef = ref(getDatabase());
+const dbRef = ref(db);
 
 const sensorElements = {
   valueSyncSec: document.getElementById("SyncSec"),
@@ -37,10 +37,7 @@ let updateStatusPreviousAltitude = 0;
 function initMap(lat, lng) {
   if (mapInitialized) return;
   mapInitialized = true;
-  const map = L.map('map', {
-    center: [lat, lng],
-    zoom: 18
-  });
+  const map = L.map('map', { center: [lat, lng], zoom: 18 });
   L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
     maxZoom: 22,
     attribution: "Skys Ace",
@@ -49,19 +46,14 @@ function initMap(lat, lng) {
 }
 
 function updateMap(sensorData) {
-  if (!map) return;
-  const lat = sensorData.valueLat;
-  const lng = sensorData.valueLng;
-  const latlng = [[lat, lng]];
-  const marker = L.marker([lat, lng]).addTo(map);
-  if (latlng.length > 1) {
-    map.panTo([lat, lng]);
-  }
+  if (!mapInitialized) return;
+  const { valueLat: lat, valueLng: lng } = sensorData;
+  L.marker([lat, lng]).addTo(map).panTo([lat, lng]);
 }
 
 function updateSensorData(sensorData) {
-  Object.keys(sensorElements).forEach(key => {
-    sensorElements[key].innerHTML = sensorData[key];
+  Object.entries(sensorElements).forEach(([key, element]) => {
+    element.innerHTML = sensorData[key];
   });
   updateStatus(sensorData);
 }
@@ -70,15 +62,9 @@ function updateStatus(sensorData) {
   const altitude = sensorData.valueGPSAltitude;
   cansatStatus = altitude > updateStatusPreviousAltitude ? 1 : (altitude < updateStatusPreviousAltitude ? 2 : 3);
   updateStatusPreviousAltitude = altitude;
-  if (cansatStatus==1) {
-    document.getElementById("Launch").innerHTML = "1";
-  }
-  else if (cansatStatus==2) {
-    document.getElementById("Deploy").innerHTML = "1";
-  }
-  else if (cansatStatus==3) {
-    document.getElementById("Land").innerHTML = "1";
-  }
+
+  const statusElementId = cansatStatus === 1 ? "Launch" : (cansatStatus === 2 ? "Deploy" : "Land");
+  document.getElementById(statusElementId).innerHTML = "1";
 }
 
 function fetchData() {
@@ -95,12 +81,7 @@ function fetchData() {
       }));
 
       const selectedGraph = document.getElementById("choose").value;
-      if (selectedGraph === "rocket-path") {
-        ThreeDChart(formattedData);
-      }
-      else {
-        createChart(formattedData, selectedGraph);
-      }
+      selectedGraph === "rocket-path" ? ThreeDChart(formattedData) : createChart(formattedData, selectedGraph);
     } else {
       console.warn("No data found in Firebase");
     }
@@ -112,28 +93,27 @@ function createChart(data, graph) {
   const labels = data.map(point => `ID: ${point.id}`);
 
   const datasets = {
-    "temp-graph": [
-      {
-        label: 'Temperature', data: data.map(point => ({
-          x: point.timestamp, y: point.valueMCPTemp
-        })), backgroundColor: 'rgb(255, 0, 0)', borderColor: 'rgb(187, 0, 0)'
-      },
-    ],
-    "press-graph": [
-      { label: 'Pressure', data: data.map(point => ({ x: point.timestamp, y: point.valuePress })), backgroundColor: 'rgb(120, 120, 120)', borderColor: 'rgb(60, 60, 60)' }
-    ]
+    "temp-graph": [{
+      label: 'Temperature',
+      data: data.map(point => ({ x: point.timestamp, y: point.valueMCPTemp })),
+      backgroundColor: 'rgb(255, 0, 0)',
+      borderColor: 'rgb(187, 0, 0)'
+    }],
+    "press-graph": [{
+      label: 'Pressure',
+      data: data.map(point => ({ x: point.timestamp, y: point.valuePress })),
+      backgroundColor: 'rgb(120, 120, 120)',
+      borderColor: 'rgb(60, 60, 60)'
+    }]
   };
 
   new Chart(ctx, {
     type: 'scatter',
-    data: {
-      labels,
-      datasets: datasets[graph]
-    },
+    data: { labels, datasets: datasets[graph] },
     options: {
       scales: {
-        x: { title: 'Time' },
-        y: { title: graph === 'temp-graph' ? 'Temperature' : 'Pressure' }
+        x: { title: { display: true, text: 'Time' } },
+        y: { title: { display: true, text: graph === 'temp-graph' ? 'Temperature' : 'Pressure' } }
       }
     }
   });
@@ -144,7 +124,7 @@ function ThreeDChart(formattedData) {
   const yValues = formattedData.map(data => data.valueLng);
   const zValues = formattedData.map(data => data.valueGPSAltitude);
 
-  var datasets = [{
+  const datasets = [{
     x: xValues,
     y: yValues,
     z: zValues,
@@ -155,43 +135,33 @@ function ThreeDChart(formattedData) {
       size: 2
     }
   }];
-  var layout = {
+
+  const layout = {
     autosize: true,
     height: 300,
-    scene: {
-      aspectratio: {
-        x: 1,
-        y: 1,
-        z: 1
-      }
-    },
-    margin: {
-      l: 0,
-      r: 0,
-      b: 0,
-      t: 0
-    }
+    scene: { aspectratio: { x: 1, y: 1, z: 1 } },
+    margin: { l: 0, r: 0, b: 0, t: 0 }
   };
+
   Plotly.newPlot('rocket-path', datasets, layout);
 }
-let scene, camera, cube, geometry, renderer, material, cubeWidth, cubeHeight;
-function parentWidth(elem) {
-  return elem.parentElement.clientWidth;
-}
-function parentHeight(elem) {
-  return elem.parentElement.clientHeight;
-}
+
+let scene, camera, cube, renderer;
+
 function initThreeD() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
-  cubeWidth = parentWidth(document.getElementById("cube"));
-  cubeHeight = parentHeight(document.getElementById("cube"));
+
+  const cubeContainer = document.getElementById("cube");
+  const cubeWidth = cubeContainer.parentElement.clientWidth;
+  const cubeHeight = cubeContainer.parentElement.clientHeight;
+
   camera = new THREE.PerspectiveCamera(75, cubeWidth / cubeHeight, 0.1, 1000);
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(cubeWidth, cubeHeight);
-  document.getElementById('cube').appendChild(renderer.domElement);
+  cubeContainer.appendChild(renderer.domElement);
 
-  var cubeMaterials = [
+  const cubeMaterials = [
     new THREE.MeshBasicMaterial({ color: 0x03045e }),
     new THREE.MeshBasicMaterial({ color: 0x023e8a }),
     new THREE.MeshBasicMaterial({ color: 0x0077b6 }),
@@ -200,8 +170,8 @@ function initThreeD() {
     new THREE.MeshBasicMaterial({ color: 0x0077b6 }),
   ];
 
-  geometry = new THREE.BoxGeometry(5, 1, 4);
-  material = new THREE.MeshFaceMaterial(cubeMaterials);
+  const geometry = new THREE.BoxGeometry(5, 1, 4);
+  const material = new THREE.MeshFaceMaterial(cubeMaterials);
 
   cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
@@ -211,15 +181,15 @@ function initThreeD() {
 
 function animate(sensorData) {
   cube.rotation.x = sensorData.valueGyX;
-  cube.rotation.y = sensorData.valueGyX;
-  cube.rotation.z = sensorData.valueGyX;
+  cube.rotation.y = sensorData.valueGyY;
+  cube.rotation.z = sensorData.valueGyZ;
   renderer.render(scene, camera);
 }
 
-var log=[];
+let log = [];
 
 function download() {
-  if (log.length === 0) {
+  if (!log.length) {
     console.warn("No log data to download.");
     return;
   }
@@ -234,14 +204,16 @@ function download() {
 }
 
 const ws = new WebSocket('ws://' + window.location.hostname + ':81/');
+
 ws.onmessage = function (event) {
   const sensorData = JSON.parse(event.data);
   updateSensorData(sensorData);
   log.push(JSON.stringify(sensorData));
+
   if (!mapInitialized) {
     initMap(sensorData.valueLat, sensorData.valueLng);
-    mapInitialized = true;
   }
+
   updateMap(sensorData);
   animate(sensorData);
 };
@@ -250,13 +222,8 @@ ws.onerror = function (error) {
   console.error("WebSocket error:", error);
 };
 
-document.getElementById("start-btn").onclick = function () { 
-  if (document.getElementById("choose").value === "gyro-visual") {
-    initThreeD();
-  }
-  else {
-    fetchData();
-  }
- };
+document.getElementById("start-btn").onclick = function () {
+  document.getElementById("choose").value === "gyro-visual" ? initThreeD() : fetchData();
+};
 
 document.getElementById("download-btn").onclick = function () { download() };
