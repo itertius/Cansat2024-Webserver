@@ -116,6 +116,30 @@ sub {
   height: 98%;
 }
 
+.cube-content {
+  padding-top: 2vh;
+  height: 25%;
+}
+
+.phasephase {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: center;
+  text-align: center;
+}
+
+.phase {
+  color: white;
+  font-size: larger;
+}
+
+#Launch,
+#Deploy,
+#Land {
+  color: white;
+  font-size: larger;
+}
+
 @media screen and (max-width: 1200px) {
   .main {
     padding: 6px;

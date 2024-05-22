@@ -70,6 +70,15 @@ function updateStatus(sensorData) {
   const altitude = sensorData.valueGPSAltitude;
   cansatStatus = altitude > updateStatusPreviousAltitude ? 1 : (altitude < updateStatusPreviousAltitude ? 2 : 3);
   updateStatusPreviousAltitude = altitude;
+  if (cansatStatus==1) {
+    document.getElementById("Launch").innerHTML = "1";
+  }
+  else if (cansatStatus==2) {
+    document.getElementById("Deploy").innerHTML = "1";
+  }
+  else if (cansatStatus==3) {
+    document.getElementById("Land").innerHTML = "1";
+  }
 }
 
 function fetchData() {
